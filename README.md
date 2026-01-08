@@ -32,6 +32,10 @@ O bot responde dúvidas sobre a **documentação oficial da API da OpenAI**, gar
 
 n8n-rag-openai-docs-assistant/
 │
+├─ assets/
+│ ├─ workflow_ingest.png
+│ ├─ workflow_query.png
+│
 ├─ workflows/
 │ ├─ 01_ingest_github_to_pinecone.json # Workflow de ingestão
 │ └─ 02_query_rag_telegram.json # Workflow de perguntas e respostas
