@@ -29,7 +29,7 @@ O bot responde dúvidas sobre a **documentação oficial da API da OpenAI**, gar
 ---
 
 ## 📂 Estrutura do Projeto
-
+```text
 n8n-rag-openai-docs-assistant/
 │
 ├─ assets/
@@ -49,7 +49,7 @@ n8n-rag-openai-docs-assistant/
 │
 └─ README.md
 
-
+```
 ---
 
 ## ⚙️ Tecnologias e Ferramentas
