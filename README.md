@@ -18,6 +18,9 @@ O bot responde dúvidas sobre a **documentação oficial da API da OpenAI**, gar
   - Fallback automático alterna para o segundo AI Agente com **OpenAI** para quando o acesso gratuito da Gemini expirar o fluxo alterna para o modelo da OpenAi pago.
   
 - **Telegram Bot**
+
+![Workflow de Ingestão](assets/chatbot.png)
+
   - Recebe perguntas em tempo real.
   - Retorna respostas contextualizadas diretamente no chat.
   - Mantém histórico por usuário utilizando `Session ID` para memória opcional.
