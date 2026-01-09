@@ -68,27 +68,32 @@ n8n-rag-openai-docs-assistant/
 ## 📝 Workflow Detalhado
 
 ### 1️⃣ Workflow de Ingestão
+
+![Workflow de Ingestão](assets/workflow_ingest.png)
+
 - **Objetivo:** converter documentação da OpenAI em chunks semânticos e armazenar no Pinecone.
 - **Etapas:**
-  1. Ler arquivos `.md` do repositório GitHub.
-  2. Aplicar **chunking customizado** (1000 caracteres por chunk com 200 de overlap).
-  3. Gerar embeddings usando **OpenAI Embeddings** (ou outro provider compatível, ex: Gemini).
-  4. Armazenar chunks e metadados no **Pinecone Vector Store**.
+1. Ler arquivos `.md` do repositório GitHub.
+2. Aplicar **chunking customizado** (1000 caracteres por chunk com 200 de overlap).
+3. Gerar embeddings usando **OpenAI Embeddings** (ou outro provider compatível, ex: Gemini).
+4. Armazenar chunks e metadados no **Pinecone Vector Store**.
 
-- **Benefício:** garante que o AI Agent possa buscar informações de forma precisa e eficiente.
+- **Benefício:** garante que o AI Agent possa coletar informações especificas com objetividade e eficiência.
 
 ### 2️⃣ Workflow de Consulta e Resposta
+
+![Workflow de Consulta](assets/workflow_query.png)
+
 - **Objetivo:** receber perguntas do usuário no Telegram e retornar respostas precisas com base na documentação.
 - **Etapas:**
-  1. **Telegram Trigger** detecta mensagem do usuário.
-  2. **AI Agent (Gemini)** tenta gerar resposta usando Pinecone Retriever.
-  3. **IF Node** verifica se houve erro ou resposta vazia.
-     - **FALSO:** envia resposta diretamente para Telegram.
-     - **VERDADEIRO:** fallback para **AI Agent (OpenAI)** e envia resposta.
-  4. **Telegram Send Message** retorna a resposta para o usuário.
-  5. **Set Node** padroniza campos (`answer` e `model_used`) para rastreabilidade.
+1. **Telegram Trigger** detecta mensagem do usuário.
+2. **AI Agent (Gemini)** tenta gerar resposta usando Pinecone Retriever.
+3. **IF Node** verifica se não houve erro ou resposta vazia.
+     - **VERDADEIRO:** envia resposta diretamente para Telegram send msg.
+     - **FALSO:** fallback para alterna para o **AI Agent (OpenAI)** e este envia resposta para o telegram send msg.
+4. **Telegram Send Message** retorna a resposta para o usuário.
 
-- **Benefício:** fallback automático garante disponibilidade e confiabilidade do bot.
+- **Benefício:** fallback automático garante disponibilidade e confiabilidade do bot priorizando baixo custo com API.
 
 ---
 
@@ -162,3 +167,9 @@ n8n-rag-openai-docs-assistant/
 * [Telegram Bot API](https://core.telegram.org/bots/api)
 * [Gemini API](https://ai.google.dev/docs)
 ---
+
+## 👤 Autor
+Alexandro Grigório Ferreira  
+📧 alexanndro@gmail.com  
+🔗 https://www.linkedin.com/in/alexsidius/   
+🔗 https://github.com/Alexsidius  
