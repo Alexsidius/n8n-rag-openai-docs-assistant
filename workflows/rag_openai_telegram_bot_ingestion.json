@@ -1,0 +1,226 @@
+{
+  "name": "rag_openai_telegram_bot_ingestion",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        16
+      ],
+      "id": "6c7e494c-d74b-4650-b1de-b10df66f7b03",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8nrag2",
+          "mode": "list",
+          "cachedResultName": "n8nrag2"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        -208
+      ],
+      "id": "8e87bdcf-dbf9-44fb-8ff1-37cbb01ffd5b",
+      "name": "Pinecone Vector Store",
+          },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "Alexsidius",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-rag-openai-docs-assistant",
+          "mode": "list",
+          "cachedResultName": "n8n-rag-openai-docs-assistant",
+          "cachedResultUrl": "https://github.com/Alexsidius/n8n-rag-openai-docs-assistant"
+        },
+        "filePath": "docs/openai_api",
+        "asBinaryProperty": false,
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        -208
+      ],
+      "id": "0a9b261d-5abb-4c3e-b9e2-1b5e962661c5",
+      "name": "Get a file",
+      "webhookId": "7226fd69-549f-42e9-965d-1446ae06032d",
+          },
+    {
+      "parameters": {
+        "url": "={{ $json.download_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        256,
+        -208
+      ],
+      "id": "5b4b08fb-ca2c-4683-853b-1fea3e3d1661",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o conteúdo do arquivo do HTTP Request\nconst text = $json[\"data\"]; // <-- aqui é o campo correto no seu HTTP Request\n\n// Configurações de chunking\nconst chunkSize = 700;    // tamanho do chunk (caracteres ou tokens aproximados)\nconst chunkOverlap = 100; // sobreposição entre chunks\n\nlet chunks = [];\nlet start = 0;\n\nwhile (start < text.length) {\n  const end = Math.min(start + chunkSize, text.length);\n  const chunkText = text.slice(start, end);\n  \n  chunks.push({\n    json: {\n      text: chunkText,           // chunk de texto\n      filename: $json[\"name\"],   // metadata opcional\n      startIndex: start,\n      endIndex: end\n    }\n  });\n\n  start += (chunkSize - chunkOverlap); // move o ponteiro considerando overlap\n}\n\nreturn chunks;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        32
+      ],
+      "id": "6e227b77-0625-4573-bffb-6972fe5fd84d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        48
+      ],
+      "id": "1e7f1435-096c-46c6-90c1-81290d46d674",
+      "name": "Embeddings OpenAI",
+          },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        48
+      ],
+      "id": "03f36f64-0b84-45b7-8696-41b804e96e1f",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 700,
+        "chunkOverlap": 100,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        832,
+        192
+      ],
+      "id": "37272227-4135-404d-b35f-7cbdb0e59848",
+      "name": "Recursive Character Text Splitter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0e9891aa-4a71-4b2e-9a4e-1b4294d1f15d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "29da93d9caac893a9cc669522e1b5a4eb9061a653b18094c4900a6fad0e10e43"
+  },
+  "id": "xwRxuaKUtrVjHgmp",
+  "tags": []
+}
