@@ -18,6 +18,9 @@ O bot responde dúvidas sobre a **documentação oficial da API da OpenAI**, gar
   - Fallback automático alterna para o segundo AI Agente com **OpenAI** para quando o acesso gratuito da Gemini expirar o fluxo alterna para o modelo da OpenAi pago.
   
 - **Telegram Bot**
+
+![Workflow de Ingestão](assets/chatbot.png)
+
   - Recebe perguntas em tempo real.
   - Retorna respostas contextualizadas diretamente no chat.
   - Mantém histórico por usuário utilizando `Session ID` para memória opcional.
@@ -37,8 +40,8 @@ n8n-rag-openai-docs-assistant/
 │ ├─ workflow_query.png
 │
 ├─ workflows/
-│ ├─ 01_ingest_github_to_pinecone.json # Workflow de ingestão
-│ └─ 02_query_rag_telegram.json # Workflow de perguntas e respostas
+│ ├─ rag_openai_telegram_bot_ingestion # Workflow de ingestão
+│ └─ rag_openai_telegram_bot_query # Workflow de perguntas e respostas
 │
 ├─ docs/
 │ └─ openai_api/
